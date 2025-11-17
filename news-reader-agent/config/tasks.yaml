@@ -1,0 +1,20 @@
+translate_task:
+  description: >
+    Translate {sentence} from English to Korean without making mistakes.
+  expected_output: >
+    A sentence that accurately translates grammar from English to Korean without compromising Korean names such as names or places.
+  agent: translator_agent
+
+retranslate_task:
+  description: >
+    Translate {sentence} from Korean to English without making mistakes.
+  expected_output: >
+    A sentence that accurately translates grammar from Korean to English without compromising Korean names such as names or places.
+  agent: translator_agent
+
+count_task:
+  description: >
+    Count the amount of letters in a sentence.
+  expected_output: >
+    The number of letters in a sentence.
+  agent: counter_agent
