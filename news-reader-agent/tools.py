@@ -1,10 +1,66 @@
+from crewai_tools import SerperDevTool
+from playwright.sync_api import sync_playwright
+import time
+from bs4 import BeautifulSoup
 from crewai.tools import tool
 
+search_tool = SerperDevTool()
+
 @tool
-def count_letters(sentence: str):
-    """ 
-        This function is to count the amount of letters in a sentence.
-        The input is a "sentence" string.
-        The output is a number.
+def scrape_tool(url: str):
     """
-    return len(sentence)
+    Use this when you need ot read the content of a website.
+    Returns the content of a website, in case the website is not available, it returns 'No content'.
+    Returns the content of a website.
+    Input should be a 'url' string. for example (https://www.cnn.com/2025/11/12/asia/thailand-cambodia-border-clashes-intl-hn)
+
+    """
+
+    print(f"Scrapping URL: {url}")
+
+    with sync_playwright() as p:
+
+        browser = p.chromium.launch(headless=True)
+
+        page = browser.new_page()
+
+        page.goto(url)
+
+        time.sleep(5)
+
+        html = page.content()
+
+        browser.close()
+
+        soup = BeautifulSoup(html, "html.parser")
+
+        unwanted_tags = [
+            "header",
+            "footer",
+            "nav",
+            "aside",
+            "script",
+            "style",
+            "noscript",
+            "iframe",
+            "form",
+            "button",
+            "input",
+            "select",
+            "textarea",
+            "img",
+            "svg",
+            "canvas",
+            "audio",
+            "video",
+            "embed",
+            "object",
+        ]
+
+        for tag in soup.find_all(unwanted_tags):
+            tag.decompose()
+
+        content = soup.get_text(separator=" ")
+
+        return content if content != "" else "No content"
+
